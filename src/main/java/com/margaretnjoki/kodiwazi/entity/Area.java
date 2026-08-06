@@ -1,13 +1,22 @@
 package com.margaretnjoki.kodiwazi.entity;
 
-import java.time.Instant;
-import java.util.UUID;
+import com.margaretnjoki.kodiwazi.base.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
 
-public class Area {
-    private UUID id;
+@Entity
+@Table(name = "areas")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Area extends BaseEntity {
+
+    @Column(nullable = false)
     private String name;
-    private Region region;
-    private Instant createdAt;
-    private Instant updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name= "region_id")
+    private Region region;
 }

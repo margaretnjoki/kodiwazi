@@ -1,20 +1,14 @@
 package com.margaretnjoki.kodiwazi.entity;
 
-import jakarta.persistence.*;
-
-import java.time.Instant;
-import java.util.UUID;
+import com.margaretnjoki.kodiwazi.base.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "regions")
-public class Region {
-    @Id
-    @GeneratedValue
-    private UUID id;
+public class Region  extends BaseEntity {
+
     @Column(nullable = false, unique = true)
     private String name;
-    @Column(nullable = false)
-    private Instant createdAt;
-    @Column(nullable = false)
-    private Instant updatedAt;
 }
