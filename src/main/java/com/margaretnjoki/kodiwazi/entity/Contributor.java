@@ -4,9 +4,15 @@ import com.margaretnjoki.kodiwazi.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.*;
 
 @Entity
 @Table(name = "contributors")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Contributor extends BaseEntity {
 
    @Column(name = "first_name", nullable = false)

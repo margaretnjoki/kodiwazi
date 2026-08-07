@@ -2,11 +2,17 @@ package com.margaretnjoki.kodiwazi.entity;
 
 import com.margaretnjoki.kodiwazi.base.BaseEntity;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "rent_submissions")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RentSubmission extends BaseEntity {
 
    @ManyToOne(optional = false)
