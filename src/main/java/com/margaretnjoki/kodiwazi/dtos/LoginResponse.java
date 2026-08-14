@@ -1,4 +1,6 @@
 package com.margaretnjoki.kodiwazi.dtos;
 
-public record LoginResponse() {
+public record LoginResponse(
+        String token
+) {
 }

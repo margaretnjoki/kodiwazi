@@ -1,4 +1,7 @@
 package com.margaretnjoki.kodiwazi.dtos;
 
-public record LoginRequest() {
+public record LoginRequest(
+        String email,
+        String password
+) {
 }
