@@ -5,7 +5,10 @@ import com.margaretnjoki.kodiwazi.dtos.RegisterContributorRequest;
 import com.margaretnjoki.kodiwazi.entity.Contributor;
 import com.margaretnjoki.kodiwazi.repository.ContributorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class AuthService {
     private final ContributorRepository contributorRepository;
     private final PasswordEncoder passwordEncoder;
