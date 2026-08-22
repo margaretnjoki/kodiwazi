@@ -2,6 +2,8 @@ package com.margaretnjoki.kodiwazi.controller;
 
 
 import com.margaretnjoki.kodiwazi.dtos.ContributorResponse;
+import com.margaretnjoki.kodiwazi.dtos.LoginRequest;
+import com.margaretnjoki.kodiwazi.dtos.LoginResponse;
 import com.margaretnjoki.kodiwazi.dtos.RegisterContributorRequest;
 import com.margaretnjoki.kodiwazi.service.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,11 @@ public class AuthController {
     @PostMapping("/register")
     public ContributorResponse register(@RequestBody RegisterContributorRequest request) {
         return authService.register(request);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 
 }
