@@ -1,4 +1,4 @@
-package com.margaretnjoki.kodiwazi.service;
+package com.margaretnjoki.kodiwazi.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

@@ -6,6 +6,7 @@ import com.margaretnjoki.kodiwazi.dtos.LoginResponse;
 import com.margaretnjoki.kodiwazi.dtos.RegisterContributorRequest;
 import com.margaretnjoki.kodiwazi.entity.Contributor;
 import com.margaretnjoki.kodiwazi.repository.ContributorRepository;
+import com.margaretnjoki.kodiwazi.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
