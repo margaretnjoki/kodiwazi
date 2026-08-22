@@ -24,7 +24,7 @@ public class RentSubmissionService {
         this.contributorRepository = contributorRepository;
     }
 
-    public RentSubmissionResponse submit(RentSubmissionRequest Request, String contributorEmail) {
+    public RentSubmissionResponse submit(RentSubmissionRequest request, String contributorEmail) {
         Contributor contributor = contributorRepository
                 .findByEmail(contributorEmail)
                 .orElseThrow(() ->
@@ -62,5 +62,5 @@ public class RentSubmissionService {
                 submission.isUtilitiesIncluded()
         );
     }
-    }
+}
 
