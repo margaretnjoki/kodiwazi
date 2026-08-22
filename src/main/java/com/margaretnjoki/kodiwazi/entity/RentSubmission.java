@@ -15,11 +15,11 @@ import java.math.BigDecimal;
 @Builder
 public class RentSubmission extends BaseEntity {
 
-   @ManyToOne(optional = false)
+   @ManyToOne(optional = false, fetch = FetchType.LAZY)
    @JoinColumn(name = "contributor_id")
    private Contributor contributor;
 
-   @ManyToOne(optional = false)
+   @ManyToOne(optional = false, fetch = FetchType.LAZY)
    @JoinColumn(name = "area_id")
    private Area area;
 
