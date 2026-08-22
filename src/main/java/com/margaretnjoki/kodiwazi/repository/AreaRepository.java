@@ -1,9 +1,10 @@
 package com.margaretnjoki.kodiwazi.repository;
 
+import com.margaretnjoki.kodiwazi.entity.Area;
 import com.margaretnjoki.kodiwazi.entity.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface AreaRepository extends JpaRepository<Region, UUID> {
+public interface AreaRepository extends JpaRepository<Area, UUID> {
 }

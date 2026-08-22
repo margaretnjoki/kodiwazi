@@ -1,6 +1,5 @@
 package com.margaretnjoki.kodiwazi.repository;
 
-import com.margaretnjoki.kodiwazi.entity.Region;
 import com.margaretnjoki.kodiwazi.entity.RentSubmission;
 import org.springframework.data.jpa.repository.JpaRepository;
 
