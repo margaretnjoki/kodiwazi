@@ -17,18 +17,10 @@ public class AreaService {
     }
 
     public List<AreaResponse> listAll() {
-        return areaRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        return areaRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     private AreaResponse toResponse(Area area) {
-        return new AreaResponse(
-                area.getId(),
-                area.getName(),
-                area.getRegion().getId(),
-                area.getRegion().getName()
-        );
+        return new AreaResponse(area.getId(), area.getName(), area.getRegion().getId(), area.getRegion().getName());
     }
 }
