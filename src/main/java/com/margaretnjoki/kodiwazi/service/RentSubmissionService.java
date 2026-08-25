@@ -3,14 +3,14 @@ package com.margaretnjoki.kodiwazi.service;
 
 import com.margaretnjoki.kodiwazi.dtos.RentSubmissionRequest;
 import com.margaretnjoki.kodiwazi.dtos.RentSubmissionResponse;
-import com.margaretnjoki.kodiwazi.entity.Area;
-import com.margaretnjoki.kodiwazi.entity.Contributor;
-import com.margaretnjoki.kodiwazi.entity.RentSubmission;
-import com.margaretnjoki.kodiwazi.entity.SubmissionStatus;
+import com.margaretnjoki.kodiwazi.entity.*;
 import com.margaretnjoki.kodiwazi.repository.AreaRepository;
 import com.margaretnjoki.kodiwazi.repository.ContributorRepository;
 import com.margaretnjoki.kodiwazi.repository.RentSubmissionRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RentSubmissionService {
@@ -61,6 +61,22 @@ public class RentSubmissionService {
                 submission.getStatus(),
                 submission.isUtilitiesIncluded()
         );
+    }
+
+    public List<RentSubmissionResponse> listSubmissions(UUID areaId, HouseType houseType) {
+
+        List<RentSubmission> submissions;
+
+        if (areaId != null && houseType != null) {
+            submissions = rentSubmissionRepository
+                    .findByAreaIdAndHouseTypeAndStatus(areaId, houseType, SubmissionStatus.ACTIVE);
+        } else {
+            submissions = rentSubmissionRepository.findByStatus(SubmissionStatus.ACTIVE);
+        }
+
+        return submissions.stream()
+                .map(this::toResponse)
+                .toList();
     }
 }
 

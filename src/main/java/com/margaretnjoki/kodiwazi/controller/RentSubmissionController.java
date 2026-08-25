@@ -2,12 +2,13 @@ package com.margaretnjoki.kodiwazi.controller;
 
 import com.margaretnjoki.kodiwazi.dtos.RentSubmissionRequest;
 import com.margaretnjoki.kodiwazi.dtos.RentSubmissionResponse;
+import com.margaretnjoki.kodiwazi.entity.HouseType;
 import com.margaretnjoki.kodiwazi.service.RentSubmissionService;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -23,6 +24,14 @@ public class RentSubmissionController {
     public RentSubmissionResponse submit(@RequestBody RentSubmissionRequest request, Authentication authentication) {
         String contributorEmail = authentication.getName();
         return rentSubmissionService.submit(request, contributorEmail);
+    }
+
+    @GetMapping
+    public List<RentSubmissionResponse> listSubmissions(
+            @RequestParam(required = false) UUID areaId,
+            @RequestParam(required = false) HouseType houseType
+    ) {
+        return rentSubmissionService.listSubmissions(areaId, houseType);
     }
 
 
