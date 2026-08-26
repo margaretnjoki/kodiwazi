@@ -6,6 +6,7 @@ import com.margaretnjoki.kodiwazi.entity.SubmissionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface RentSubmissionRepository extends JpaRepository<RentSubmission, UUID> {
@@ -16,4 +17,12 @@ public interface RentSubmissionRepository extends JpaRepository<RentSubmission, 
     );
 
     List<RentSubmission> findByStatus(SubmissionStatus status);
+
+    Optional<RentSubmission> findByContributorIdAndAreaIdAndHouseTypeAndUtilitiesIncludedAndStatus(
+            UUID contributorId,
+            UUID areaId,
+            HouseType houseType,
+            boolean utilitiesIncluded,
+            SubmissionStatus status
+    );
 }
