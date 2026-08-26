@@ -18,7 +18,7 @@ public interface RentSubmissionRepository extends JpaRepository<RentSubmission, 
 
     List<RentSubmission> findByStatus(SubmissionStatus status);
 
-    Optional<RentSubmission> findByContributorIdAndAreaIdAndHouseTypeAndUtilitiesIncludedAndStatus(
+    List<RentSubmission> findByContributorIdAndAreaIdAndHouseTypeAndUtilitiesIncludedAndStatus(
             UUID contributorId,
             UUID areaId,
             HouseType houseType,
