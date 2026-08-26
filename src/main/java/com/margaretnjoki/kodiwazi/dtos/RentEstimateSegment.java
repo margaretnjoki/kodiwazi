@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public record RentEstimateSegment(
         BigDecimal medianAmount,
-        int sampleSize
+        int sampleSize,
+        double confidenceScore,
+        String confidenceLabel
 ) {
 }
