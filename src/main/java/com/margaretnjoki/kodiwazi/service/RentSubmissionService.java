@@ -40,7 +40,7 @@ public class RentSubmissionService {
                         new IllegalArgumentException("Area not found")
                 );
 
-        Optional<RentSubmission> existing = rentSubmissionRepository
+        List<RentSubmission> existingMatches = rentSubmissionRepository
                 .findByContributorIdAndAreaIdAndHouseTypeAndUtilitiesIncludedAndStatus(
                         contributor.getId(),
                         area.getId(),
@@ -51,8 +51,8 @@ public class RentSubmissionService {
 
         RentSubmission submission;
 
-        if (existing.isPresent()) {
-            submission = existing.get();
+        if (!existingMatches.isEmpty()) {
+            submission = existingMatches.get(0);
             submission.setAmount(request.amount());
         } else {
             SubmissionStatus status = determineStatus(area.getId(), request.houseType(), request.amount());
