@@ -9,6 +9,7 @@ import com.margaretnjoki.kodiwazi.repository.ContributorRepository;
 import com.margaretnjoki.kodiwazi.repository.RentSubmissionRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -97,6 +98,41 @@ public class RentSubmissionService {
         return submissions.stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    private static final int MIN_SAMPLES_FOR_OUTLIER_CHECK = 3;
+    private static final double OUTLIER_STD_DEV_THRESHOLD = 2.0;
+
+    private SubmissionStatus determineStatus(UUID areaId, HouseType houseType, BigDecimal newAmount) {
+
+        List<RentSubmission> existingSubmissions = rentSubmissionRepository
+                .findByAreaIdAndHouseTypeAndStatus(areaId, houseType, SubmissionStatus.ACTIVE);
+
+        if (existingSubmissions.size() < MIN_SAMPLES_FOR_OUTLIER_CHECK) {
+            return SubmissionStatus.ACTIVE;
+        }
+
+        double mean = existingSubmissions.stream()
+                .mapToDouble(s -> s.getAmount().doubleValue())
+                .average()
+                .orElse(0.0);
+
+        double variance = existingSubmissions.stream()
+                .mapToDouble(s -> Math.pow(s.getAmount().doubleValue() - mean, 2))
+                .average()
+                .orElse(0.0);
+
+        double stdDev = Math.sqrt(variance);
+
+        if (stdDev == 0.0) {
+            return SubmissionStatus.ACTIVE;
+        }
+
+        double deviation = Math.abs(newAmount.doubleValue() - mean) / stdDev;
+
+        return deviation > OUTLIER_STD_DEV_THRESHOLD
+                ? SubmissionStatus.FLAGGED
+                : SubmissionStatus.ACTIVE;
     }
 }
 
