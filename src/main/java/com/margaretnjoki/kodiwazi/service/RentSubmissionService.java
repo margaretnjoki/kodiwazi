@@ -10,6 +10,7 @@ import com.margaretnjoki.kodiwazi.repository.RentSubmissionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,6 +26,7 @@ public class RentSubmissionService {
     }
 
     public RentSubmissionResponse submit(RentSubmissionRequest request, String contributorEmail) {
+
         Contributor contributor = contributorRepository
                 .findByEmail(contributorEmail)
                 .orElseThrow(() ->
@@ -37,14 +39,32 @@ public class RentSubmissionService {
                         new IllegalArgumentException("Area not found")
                 );
 
-        RentSubmission submission = RentSubmission.builder()
-                .contributor(contributor)
-                .area(area)
-                .houseType(request.houseType())
-                .amount(request.amount())
-                .status(SubmissionStatus.ACTIVE)
-                .utilitiesIncluded(request.utilitiesIncluded())
-                .build();
+        Optional<RentSubmission> existing = rentSubmissionRepository
+                .findByContributorIdAndAreaIdAndHouseTypeAndUtilitiesIncludedAndStatus(
+                        contributor.getId(),
+                        area.getId(),
+                        request.houseType(),
+                        request.utilitiesIncluded(),
+                        SubmissionStatus.ACTIVE
+                );
+
+        RentSubmission submission;
+
+        if (existing.isPresent()) {
+            submission = existing.get();
+            submission.setAmount(request.amount());
+        } else {
+            SubmissionStatus status = determineStatus(area.getId(), request.houseType(), request.amount());
+
+            submission = RentSubmission.builder()
+                    .contributor(contributor)
+                    .area(area)
+                    .houseType(request.houseType())
+                    .amount(request.amount())
+                    .status(status)
+                    .utilitiesIncluded(request.utilitiesIncluded())
+                    .build();
+        }
 
         RentSubmission saved = rentSubmissionRepository.save(submission);
 
