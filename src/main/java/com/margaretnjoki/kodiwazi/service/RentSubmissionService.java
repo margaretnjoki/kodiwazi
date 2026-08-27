@@ -55,8 +55,7 @@ public class RentSubmissionService {
             submission = existingMatches.get(0);
             submission.setAmount(request.amount());
         } else {
-            SubmissionStatus status = determineStatus(area.getId(), request.houseType(), request.amount());
-
+            SubmissionStatus status = determineStatus(area.getId(), request.houseType(), request.utilitiesIncluded(), request.amount());
             submission = RentSubmission.builder()
                     .contributor(contributor)
                     .area(area)
@@ -103,15 +102,22 @@ public class RentSubmissionService {
     private static final int MIN_SAMPLES_FOR_OUTLIER_CHECK = 3;
     private static final double OUTLIER_STD_DEV_THRESHOLD = 2.0;
 
-    private SubmissionStatus determineStatus(UUID areaId, HouseType houseType, BigDecimal newAmount) {
+    private SubmissionStatus determineStatus(
+            UUID areaId,
+            HouseType houseType,
+            boolean utilitiesIncluded,
+            BigDecimal newAmount
+    ) {
 
         List<RentSubmission> existingSubmissions = rentSubmissionRepository
-                .findByAreaIdAndHouseTypeAndStatus(areaId, houseType, SubmissionStatus.ACTIVE);
+                .findByAreaIdAndHouseTypeAndStatus(areaId, houseType, SubmissionStatus.ACTIVE)
+                .stream()
+                .filter(s -> s.isUtilitiesIncluded() == utilitiesIncluded)
+                .toList();
 
         if (existingSubmissions.size() < MIN_SAMPLES_FOR_OUTLIER_CHECK) {
             return SubmissionStatus.ACTIVE;
         }
-
         double mean = existingSubmissions.stream()
                 .mapToDouble(s -> s.getAmount().doubleValue())
                 .average()
