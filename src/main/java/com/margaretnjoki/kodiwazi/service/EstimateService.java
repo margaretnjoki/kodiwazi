@@ -1,5 +1,7 @@
 package com.margaretnjoki.kodiwazi.service;
 
+import com.margaretnjoki.kodiwazi.dtos.QuoteCheckRequest;
+import com.margaretnjoki.kodiwazi.dtos.QuoteCheckResponse;
 import com.margaretnjoki.kodiwazi.dtos.RentEstimateResponse;
 import com.margaretnjoki.kodiwazi.dtos.RentEstimateSegment;
 import com.margaretnjoki.kodiwazi.entity.Area;
@@ -174,5 +176,58 @@ public class EstimateService {
     }
 
     private record WeightedAmount(BigDecimal amount, double weight) {
+    }
+
+    public QuoteCheckResponse checkQuote(
+            UUID areaId,
+            HouseType houseType,
+            QuoteCheckRequest request
+    ) {
+        RentEstimateResponse estimate = getEstimate(areaId, houseType);
+
+        RentEstimateSegment segment = request.utilitiesIncluded()
+                ? estimate.utilitiesIncluded()
+                : estimate.utilitiesExcluded();
+
+        if (segment.medianAmount() == null) {
+            return new QuoteCheckResponse(
+                    request.quotedAmount(),
+                    null,
+                    null,
+                    "INSUFFICIENT_DATA",
+                    0.0,
+                    "LOW"
+            );
+        }
+
+        double median = segment.medianAmount().doubleValue();
+        double quoted = request.quotedAmount().doubleValue();
+        double percentageDiff = ((quoted - median) / median) * 100.0;
+
+        String verdict = determineVerdict(percentageDiff);
+
+        return new QuoteCheckResponse(
+                request.quotedAmount(),
+                segment.medianAmount(),
+                round(percentageDiff),
+                verdict,
+                segment.confidenceScore(),
+                segment.confidenceLabel()
+        );
+    }
+
+    private String determineVerdict(double percentageDiff) {
+
+        double abs = Math.abs(percentageDiff);
+
+        if (abs <= 10.0) {
+            return "TYPICAL";
+        }
+
+        if (percentageDiff > 0) {
+            return abs <= 25.0 ? "ABOVE_TYPICAL" : "SIGNIFICANTLY_ABOVE_TYPICAL";
+        } else {
+            return abs <= 25.0 ? "BELOW_TYPICAL" : "SIGNIFICANTLY_BELOW_TYPICAL";
+        }
     }
 }
