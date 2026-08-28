@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/areas/{areaId}/house-types/{houseType}/estimate")
+@RequestMapping("/areas/{areaId}/house-types/{houseType}")
 public class EstimateController {
 
     private final EstimateService estimateService;
@@ -19,7 +19,7 @@ public class EstimateController {
         this.estimateService = estimateService;
     }
 
-    @GetMapping
+    @GetMapping("/estimate")
     public RentEstimateResponse getEstimate(
             @PathVariable UUID areaId,
             @PathVariable HouseType houseType
