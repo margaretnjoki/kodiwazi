@@ -4,9 +4,11 @@ import com.margaretnjoki.kodiwazi.dtos.AreaResponse;
 import com.margaretnjoki.kodiwazi.service.AreaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/areas")
@@ -19,7 +21,10 @@ public class AreaController {
     }
 
     @GetMapping
-    public List<AreaResponse> listAreas() {
-        return areaService.listAll();
+    public List<AreaResponse> listAreas(
+            @RequestParam(required = false) UUID regionId,
+            @RequestParam(required = false) String name
+    ) {
+        return areaService.listAreas(regionId, name);
     }
 }
