@@ -6,6 +6,7 @@ import com.margaretnjoki.kodiwazi.repository.AreaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AreaService {
@@ -16,8 +17,26 @@ public class AreaService {
         this.areaRepository = areaRepository;
     }
 
-    public List<AreaResponse> listAll() {
-        return areaRepository.findAll().stream().map(this::toResponse).toList();
+    public List<AreaResponse> listAreas(UUID regionId, String name) {
+
+        List<Area> areas;
+
+        boolean hasRegion = regionId != null;
+        boolean hasName = name != null && !name.isBlank();
+
+        if (hasRegion && hasName) {
+            areas = areaRepository.findByRegionIdAndNameContainingIgnoreCase(regionId, name);
+        } else if (hasRegion) {
+            areas = areaRepository.findByRegionId(regionId);
+        } else if (hasName) {
+            areas = areaRepository.findByNameContainingIgnoreCase(name);
+        } else {
+            areas = areaRepository.findAll();
+        }
+
+        return areas.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     private AreaResponse toResponse(Area area) {
