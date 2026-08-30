@@ -4,6 +4,7 @@ import com.margaretnjoki.kodiwazi.dtos.RentSubmissionRequest;
 import com.margaretnjoki.kodiwazi.dtos.RentSubmissionResponse;
 import com.margaretnjoki.kodiwazi.entity.HouseType;
 import com.margaretnjoki.kodiwazi.service.RentSubmissionService;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class RentSubmissionController {
     }
 
     @PostMapping
-    public RentSubmissionResponse submit(@RequestBody RentSubmissionRequest request, Authentication authentication) {
+    public RentSubmissionResponse submit(@Valid @RequestBody RentSubmissionRequest request, Authentication authentication) {
         String contributorEmail = authentication.getName();
         return rentSubmissionService.submit(request, contributorEmail);
     }
