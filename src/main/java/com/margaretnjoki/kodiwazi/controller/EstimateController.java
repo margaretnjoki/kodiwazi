@@ -5,6 +5,7 @@ import com.margaretnjoki.kodiwazi.dtos.QuoteCheckResponse;
 import com.margaretnjoki.kodiwazi.dtos.RentEstimateResponse;
 import com.margaretnjoki.kodiwazi.entity.HouseType;
 import com.margaretnjoki.kodiwazi.service.EstimateService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -31,7 +32,7 @@ public class EstimateController {
     public QuoteCheckResponse checkQuote(
             @PathVariable UUID areaId,
             @PathVariable HouseType houseType,
-            @RequestBody QuoteCheckRequest request
+            @Valid @RequestBody QuoteCheckRequest request
     ) {
         return estimateService.checkQuote(areaId, houseType, request);
     }
