@@ -1,5 +1,7 @@
 package com.margaretnjoki.kodiwazi.service;
 
+import com.margaretnjoki.kodiwazi.dtos.QuoteCheckRequest;
+import com.margaretnjoki.kodiwazi.dtos.QuoteCheckResponse;
 import com.margaretnjoki.kodiwazi.dtos.RentEstimateResponse;
 import com.margaretnjoki.kodiwazi.entity.Area;
 import com.margaretnjoki.kodiwazi.entity.HouseType;
@@ -72,7 +74,6 @@ class EstimateServiceTest {
 
     @Test
     void oldOutlierSubmissionsHaveLessInfluenceThanFreshOnes() {
-
         UUID areaId = UUID.randomUUID();
         Area area = Area.builder().name("Kilimani").build();
         area.setId(areaId);
@@ -93,5 +94,104 @@ class EstimateServiceTest {
 
         assertThat(response.utilitiesIncluded().medianAmount())
                 .isEqualByComparingTo(BigDecimal.valueOf(20000));
+    }
+
+    @Test
+    void sameMediansButDifferentConsistencyProduceDifferentConfidence() {
+
+        UUID areaId = UUID.randomUUID();
+        Area area = Area.builder().name("Kilimani").build();
+        area.setId(areaId);
+
+        List<RentSubmission> tight = List.of(
+                submission(14800, true, Instant.now()),
+                submission(14900, true, Instant.now()),
+                submission(15000, true, Instant.now()),
+                submission(15000, true, Instant.now()),
+                submission(15000, true, Instant.now()),
+                submission(15000, true, Instant.now()),
+                submission(15000, true, Instant.now()),
+                submission(15100, true, Instant.now()),
+                submission(15100, true, Instant.now()),
+                submission(15200, true, Instant.now())
+        );
+
+        when(areaRepository.findById(areaId)).thenReturn(Optional.of(area));
+        when(rentSubmissionRepository.findByAreaIdAndHouseTypeAndStatus(
+                areaId, HouseType.ONE_BEDROOM, SubmissionStatus.ACTIVE
+        )).thenReturn(tight);
+
+        RentEstimateResponse tightResponse = estimateService.getEstimate(areaId, HouseType.ONE_BEDROOM);
+
+        UUID areaId2 = UUID.randomUUID();
+        Area area2 = Area.builder().name("Westlands").build();
+        area2.setId(areaId2);
+
+        List<RentSubmission> scattered = List.of(
+                submission(5000, true, Instant.now()),
+                submission(15000, true, Instant.now()),
+                submission(30000, true, Instant.now())
+        );
+
+        when(areaRepository.findById(areaId2)).thenReturn(Optional.of(area2));
+        when(rentSubmissionRepository.findByAreaIdAndHouseTypeAndStatus(
+                areaId2, HouseType.ONE_BEDROOM, SubmissionStatus.ACTIVE
+        )).thenReturn(scattered);
+
+        RentEstimateResponse scatteredResponse = estimateService.getEstimate(areaId2, HouseType.ONE_BEDROOM);
+
+        assertThat(tightResponse.utilitiesIncluded().medianAmount())
+                .isEqualByComparingTo(BigDecimal.valueOf(15000));
+        assertThat(scatteredResponse.utilitiesIncluded().medianAmount())
+                .isEqualByComparingTo(BigDecimal.valueOf(15000));
+
+        assertThat(tightResponse.utilitiesIncluded().confidenceScore())
+                .isGreaterThan(scatteredResponse.utilitiesIncluded().confidenceScore());
+    }
+
+    @Test
+    void quoteFarAboveMedianIsClassifiedAsSignificantlyAboveTypical() {
+
+        UUID areaId = UUID.randomUUID();
+        Area area = Area.builder().name("Kilimani").build();
+        area.setId(areaId);
+
+        List<RentSubmission> submissions = List.of(
+                submission(15000, true, Instant.now()),
+                submission(15000, true, Instant.now()),
+                submission(15000, true, Instant.now())
+        );
+
+        when(areaRepository.findById(areaId)).thenReturn(Optional.of(area));
+        when(rentSubmissionRepository.findByAreaIdAndHouseTypeAndStatus(
+                areaId, HouseType.ONE_BEDROOM, SubmissionStatus.ACTIVE
+        )).thenReturn(submissions);
+
+        QuoteCheckRequest request = new QuoteCheckRequest(BigDecimal.valueOf(30000), true);
+
+        QuoteCheckResponse response = estimateService.checkQuote(areaId, HouseType.ONE_BEDROOM, request);
+
+        assertThat(response.verdict()).isEqualTo("SIGNIFICANTLY_ABOVE_TYPICAL");
+        assertThat(response.medianAmount()).isEqualByComparingTo(BigDecimal.valueOf(15000));
+    }
+
+    @Test
+    void segmentWithNoSubmissionsReturnsHonestNullMedian() {
+
+        UUID areaId = UUID.randomUUID();
+        Area area = Area.builder().name("Karen").build();
+        area.setId(areaId);
+
+        when(areaRepository.findById(areaId)).thenReturn(Optional.of(area));
+        when(rentSubmissionRepository.findByAreaIdAndHouseTypeAndStatus(
+                areaId, HouseType.THREE_BEDROOM, SubmissionStatus.ACTIVE
+        )).thenReturn(List.of());
+
+        RentEstimateResponse response = estimateService.getEstimate(areaId, HouseType.THREE_BEDROOM);
+
+        assertThat(response.utilitiesIncluded().medianAmount()).isNull();
+        assertThat(response.utilitiesIncluded().sampleSize()).isEqualTo(0);
+        assertThat(response.utilitiesExcluded().medianAmount()).isNull();
+        assertThat(response.utilitiesExcluded().sampleSize()).isEqualTo(0);
     }
 }
