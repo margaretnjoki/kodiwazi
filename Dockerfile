@@ -1,11 +1,12 @@
-FROM eclipse-temurin:21-jdk AS build
+# Build stage: compile the app using Maven (pre-installed, no wrapper download needed)
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+COPY pom.xml ./
+RUN mvn dependency:go-offline -B
 COPY src ./src
-RUN ./mvnw clean package -DskipTests -B
+RUN mvn clean package -DskipTests -B
 
+# Run stage: lightweight image with just the built JAR
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
