@@ -1,31 +1,28 @@
 spring:
   application:
     name: kodiwazi
-
   datasource:
     url: jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-
   jpa:
     hibernate:
       ddl-auto: validate
-
     properties:
       hibernate:
         format_sql: true
-
   flyway:
     enabled: true
-
 server:
   servlet:
     context-path: /api/v1
-
 logging:
   level:
     org.springframework.security: DEBUG
-
 jwt:
   secret: ${JWT_SECRET}
   expiration-ms: 3600000
+springdoc:
+  api-docs:
+    server:
+      url: https://kodiwazi-api.fly.dev/api/v1
