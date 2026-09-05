@@ -17,17 +17,22 @@ public class AreaService {
         this.areaRepository = areaRepository;
     }
 
-    public List<AreaResponse> listAreas(UUID regionId, String name) {
+    public List<AreaResponse> listAreas(UUID regionId, String regionName, String name) {
 
         List<Area> areas;
 
-        boolean hasRegion = regionId != null;
+        boolean hasRegionId = regionId != null;
+        boolean hasRegionName = regionName != null && !regionName.isBlank();
         boolean hasName = name != null && !name.isBlank();
 
-        if (hasRegion && hasName) {
+        if (hasRegionId && hasName) {
             areas = areaRepository.findByRegionIdAndNameContainingIgnoreCase(regionId, name);
-        } else if (hasRegion) {
+        } else if (hasRegionName && hasName) {
+            areas = areaRepository.findByRegionNameIgnoreCaseAndNameContainingIgnoreCase(regionName, name);
+        } else if (hasRegionId) {
             areas = areaRepository.findByRegionId(regionId);
+        } else if (hasRegionName) {
+            areas = areaRepository.findByRegionNameIgnoreCase(regionName);
         } else if (hasName) {
             areas = areaRepository.findByNameContainingIgnoreCase(name);
         } else {

@@ -4,7 +4,6 @@ import com.margaretnjoki.kodiwazi.dtos.AreaResponse;
 import com.margaretnjoki.kodiwazi.service.AreaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +35,9 @@ public class AreaController {
     @GetMapping
     public List<AreaResponse> listAreas(
             @Parameter(description = "UUID of a region to filter by") @RequestParam(required = false) UUID regionId,
+            @Parameter(description = "Case-insensitive region name to filter by, e.g. 'Nairobi'") @RequestParam(required = false) String regionName,
             @Parameter(description = "Partial, case-insensitive area name to search for") @RequestParam(required = false) String name
     ) {
-        return areaService.listAreas(regionId, name);
+        return areaService.listAreas(regionId,regionName,name);
     }
 }
