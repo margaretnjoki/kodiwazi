@@ -1,12 +1,11 @@
 package com.margaretnjoki.kodiwazi.config;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
-
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
@@ -17,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
                         "typical rent for an area and house type, or check whether a " +
                         "quote they've been given is fair."
         ),
+        servers = @Server(url = "https://kodiwazi-api.fly.dev/api/v1"),
         security = @SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(

@@ -22,7 +22,3 @@ logging:
 jwt:
   secret: ${JWT_SECRET}
   expiration-ms: 3600000
-springdoc:
-  api-docs:
-    server:
-      url: https://kodiwazi-api.fly.dev/api/v1
