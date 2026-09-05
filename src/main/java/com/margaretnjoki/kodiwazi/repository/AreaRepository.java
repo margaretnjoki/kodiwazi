@@ -13,4 +13,8 @@ public interface AreaRepository extends JpaRepository<Area, UUID> {
     List<Area> findByNameContainingIgnoreCase(String name);
 
     List<Area> findByRegionIdAndNameContainingIgnoreCase(UUID regionId, String name);
+
+    List<Area> findByRegionNameIgnoreCase(String regionName);
+
+    List<Area> findByRegionNameIgnoreCaseAndNameContainingIgnoreCase(String regionName, String name);
 }
