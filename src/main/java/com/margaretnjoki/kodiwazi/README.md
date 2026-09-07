@@ -252,8 +252,6 @@ Built incrementally against a self directed growth level spec:
 - [x] **Level 3, Abuse Resistance:** duplicate submission prevention, statistical outlier flagging
 - [x] **Level 4, Trustworthy & Documented:** automated tests, interactive API documentation (Swagger UI)
 - [x] **Level 5, Live:** deployed on Fly.io with hosted PostgreSQL (Supabase), real secrets management
-- [ ] **Level 6, Smart (stretch):** historical trend queries, caching, spike detection
-
 ---
 
 ## Author

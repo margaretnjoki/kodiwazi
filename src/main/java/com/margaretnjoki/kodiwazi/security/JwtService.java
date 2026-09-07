@@ -25,7 +25,6 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // build a signed token with the user's email as the "subject"
     public String generateToken(String email) {
         Instant now = Instant.now();
         return Jwts.builder()
@@ -36,12 +35,10 @@ public class JwtService {
                 .compact();
     }
 
-    //extracting email using the generated token
     public String extractEmail(String token) {
         return parseClaims(token).getSubject();
     }
 
-    //verifying whether the token is valid otherwise throw an exception
     public boolean isValid(String token) {
         try {
             parseClaims(token);
