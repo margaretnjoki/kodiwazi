@@ -7,6 +7,7 @@ import com.margaretnjoki.kodiwazi.entity.HouseType;
 import com.margaretnjoki.kodiwazi.service.EstimateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class EstimateController {
     public EstimateController(EstimateService estimateService) {
         this.estimateService = estimateService;
     }
+
     @Operation(
             summary = "Get the rent estimate for an area and house type",
             description = "Returns a recency-weighted median rent for this segment, " +
@@ -31,6 +33,7 @@ public class EstimateController {
                     "backing data. No authentication required."
     )
 
+    @SecurityRequirements
     @GetMapping("/estimate")
     public RentEstimateResponse getEstimate(
             @Parameter(description = "UUID of the area, from GET /areas") @PathVariable UUID areaId,
@@ -39,6 +42,7 @@ public class EstimateController {
     ) {
         return estimateService.getEstimate(areaId, houseType);
     }
+
     @Operation(
             summary = "Check whether a quoted rent is fair",
             description = "Compares a quoted amount against the segment's typical rent, " +
@@ -46,6 +50,7 @@ public class EstimateController {
                     "the confidence behind that comparison. No authentication required."
     )
 
+    @SecurityRequirements
     @PostMapping("/check-quote")
     public QuoteCheckResponse checkQuote(
             @Parameter(description = "UUID of the area, from GET /areas") @PathVariable UUID areaId,
